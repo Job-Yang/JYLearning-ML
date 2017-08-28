@@ -14,9 +14,9 @@ with graph.as_default():
 
 	with tf.name_scope("Variables"):
 		# 追踪数据流图运行次数的 Variables对象
-		global_step = tf.Variables(0, dtype=tf.init32, trainable=False, name="global_step")
+		global_step = tf.Variable(0, dtype=tf.int32, trainable=False, name="global_step")
 		# 追踪所以输出随着时间的累加和的 Variables对象
-		total_output = tf.Variables(0.0, dtype=tf.float32, trainable=False, name="total_output")
+		total_output = tf.Variable(0.0, dtype=tf.float32, trainable=False, name="total_output")
 
 	#主要的变换Op
 	with tf.name_scope("transformation"):
@@ -28,8 +28,8 @@ with graph.as_default():
 
 		# 独立的中间层
 		with tf.name_scope("intermediate_layer"):
-			b = tf.redece_prod(a, name="product_b")
-			c = tf.redece_sum(a, name="sum_c")
+			b = tf.reduce_prod(a, name="product_b")
+			c = tf.reduce_sum(a, name="sum_c")
 
 		# 独立的输出层
 		with tf.name_scope("output"):
@@ -46,22 +46,22 @@ with graph.as_default():
 		avg = tf.div(update_total, tf.cast(increment_step, tf.float32), name="average")
 
 		# 为输出节点创建汇总数据
-		tf.scalar_summary(b'Output', output, name="output_summary")
-		tf.scalar_summary(b'Sum of outputs over time', update_total, name="total_summary")
-		tf.scalar_summary(b'Average of outputs over time', avg, name="average_summary")
+		tf.summary.scalar('output_summary', output)
+		tf.summary.scalar('total_summary', update_total)
+		tf.summary.scalar('average_summary', avg)
 
 	# 全局Variable对象和Op
 	with tf.name_scope("global_ops"):
 		# 初始化Op
-		init = tf.initialize_all_variables()
+		init = tf.global_variables_initializer()
 		# 将所有汇总数据合并到一个Op中
-		merged_summaries = tf.merge_all_summaries()
+		merged_summaries = tf.summary.merge_all()
 
 	# 用明确创建的 Graph对象启动一个会话
 	sess = tf.Session(graph=graph)
 
 	# 开启一个SummaryWriter对象，保存汇总数据
-	writer = tf.train.SummaryWriter('./improved_gragh', graph)
+	writer = tf.summary.FileWriter('./improved_gragh', graph)
 
 	# 初始化Variable对象
 	sess.run(init)
@@ -98,8 +98,3 @@ def run_gragh(input_tensor):
 
 
 	
-
-
-
-
-
