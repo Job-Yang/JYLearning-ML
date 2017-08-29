@@ -31,11 +31,11 @@ with tf.Session() as sess:
 		sess.run([train_op])
 
 		# 处于调试和学习的目的，查看损失在训练过程中递减的情况
-		if step % 10 = 0:
-			print "loss:",sess.run([total_loss])
+		if step % 10 == 0:
+			print ("loss:",sess.run([total_loss]))
 
 		# 保存训练检查点
-		if step % 1000 = 0:
+		if step % 1000 == 0:
 			saver.save(sess, 'my_model', global_step=step)
 
 
