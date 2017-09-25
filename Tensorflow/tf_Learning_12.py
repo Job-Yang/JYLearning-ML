@@ -77,7 +77,6 @@ with tf.Session() as sess:
 
 	image = read_image("./images/dog.jpg")
 	image_batch = tf.image.convert_image_dtype(tf.expand_dims(image, 0), tf.float32, saturate=False)
-	
 	image_convolution(image_batch, kernel1)
 	image_convolution(image_batch, kernel2)
 
