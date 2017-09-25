@@ -37,13 +37,13 @@ def write_tfrecord(image, file_name):
 	image_bytes = image_loaded.tobytes()
 
 	# 导出TFRecord
-	writer = tf.python_io.TFRecordWriter("./output/training-image.tfrecord")
+	writer = tf.python_io.TFRecordWriter(file_name)
 
 	# 在样本文件中不保存图像的宽度，高度或通道数，以便节省空间
 	example = tf.train.Example(features=tf.train.Features(feature={
-            'label': tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_label])),
-            'image': tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
-        }))
+			'label': tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_label])),
+			'image': tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
+		}))
 
 	# 将样本保存到一个文本文件tfrecord中
 	writer.write(example.SerializeToString())
@@ -73,27 +73,19 @@ def load_tfrecord(file_name):
 	tf_record_image = tf.reshape(tf_record_image, [image_height, image_width, image_channels])
 
 	tf_record_label = tf.cast(tf_record_features['label'], tf.string)
+	return tf_record_label, tf_record_image
 
 if __name__ == '__main__':
 
 	# 复用之前的图像
 	image = read_image("./images/dog.jpg")
+	print(image)
 	file_name = "./output/training-image.tfrecord"
 	write_tfrecord(image, file_name)
-	load_tfrecord(file_name)
+	tf_record_label, tf_record_image = load_tfrecord(file_name)
 
 	sess.run(tf.equal(image, tf_record_image))
 
 	# 检查标签是否一致
 	sess.run(tf_record_label)
-
-
-
-
-
-
-
-
-
-
 
